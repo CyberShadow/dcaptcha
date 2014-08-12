@@ -40,7 +40,7 @@ Challenge getCaptcha()
 						code =
 							q{
 								(A, B) => A @ B
-							}.outdent().strip()
+							}.formatExample()
 							.replace("A", identifiers.pluck)
 							.replace("B", identifiers.pluck)
 							.replace("@", mathOperators.pluck)
@@ -52,8 +52,11 @@ Challenge getCaptcha()
 						string bye = ["Bye", "Goodbye", "Shutting down", "Exiting"].sample ~ ["", ".", "...", "!"].sample;
 						code =
 							q{
-								static ~this() { writeln("BYE"); }
-							}.outdent().strip()
+								static ~this()
+								{
+									writeln("BYE");
+								}
+							}.formatExample()
 							.replace("BYE", bye)
 						;
 						answers = ["static destructor", "module destructor", "thread destructor"];
@@ -63,7 +66,7 @@ Challenge getCaptcha()
 						code =
 							q{
 								/+ A = B @ C; /+ A = X; +/ +/
-							}.outdent().strip()
+							}.formatExample()
 							.replace("A", identifiers.pluck)
 							.replace("B", identifiers.pluck)
 							.replace("C", identifiers.pluck)
@@ -77,7 +80,7 @@ Challenge getCaptcha()
 						code =
 							q{
 								auto A = new class O {};
-							}.outdent().strip()
+							}.formatExample()
 							.replace("A", identifiers.pluck)
 							.replace("O", identifiers.pluck.toUpper)
 						;
@@ -89,31 +92,34 @@ Challenge getCaptcha()
 						code =
 							q{
 								string A = TEXT;
-							}.outdent().strip()
+							}.formatExample()
 							.replace("F", identifiers.pluck)
-							.replace("TEXT", `q"` ~ delimiter ~ "\n" ~ MarkovChain!2.query().join(" ").wrap(50).strip() ~ "\n" ~ delimiter ~ `"`)
+							.replace("TEXT", `q"` ~ delimiter ~ "\n" ~ MarkovChain!2.query().join(" ").wrap(38).strip() ~ "\n" ~ delimiter ~ `"`)
 						;
 						answers = cartesianJoin(["", "multiline ", "multi-line "], ["delimited", "heredoc"], ["", " string", " strings"]);
 					},
 					// hex strings
 					{
-						auto hex =
-							uniform(3, 5)
-							.iota
-							.map!(i => "xX".sample)
-							.map!(f =>
-								[1, 2, 4].sample
+						string hex;
+						do
+							hex =
+								uniform(3, 5)
 								.iota
-								.map!(j =>
-									format("%02" ~ f, uniform(0, 0x100))
+								.map!(i => "xX".sample)
+								.map!(f =>
+									[1, 2, 4].sample
+									.iota
+									.map!(j =>
+										format("%02" ~ f, uniform(0, 0x100))
+									)
+									.join("")
 								)
-								.join("")
-							)
-							.join(" ");
+								.join(" ");
+						while (hex.length > 20);
 						code =
 							q{
 								string A = x"CC";
-							}.outdent().strip()
+							}.formatExample()
 							.replace("A", identifiers.pluck)
 							.replace("CC", hex)
 						;
@@ -125,7 +131,7 @@ Challenge getCaptcha()
 						code =
 							q{
 								T[U] A;
-							}.outdent().strip()
+							}.formatExample()
 							.replace("A", identifiers.pluck)
 							.replace("T", types.sample)
 							.replace("U", types.sample)
@@ -137,7 +143,7 @@ Challenge getCaptcha()
 						code =
 							q{
 								A = B[X..Y];
-							}.outdent().strip()
+							}.formatExample()
 							.replace("A", identifiers.pluck)
 							.replace("B", identifiers.pluck)
 							.replace("X", uniform(0, 5).text)
@@ -158,8 +164,13 @@ Challenge getCaptcha()
 						int y = uniform(x/4, x/2);
 						code =
 							q{
-								int F() { int A = X; A %= Y; return A; }
-							}.outdent().strip()
+								int F()
+								{
+									int A = X;
+									A %= Y;
+									return A;
+								}
+							}.formatExample()
 							.replace("F", identifiers.pluck)
 							.replace("A", identifiers.pluck)
 							.replace("X", x.text)
@@ -174,8 +185,14 @@ Challenge getCaptcha()
 						int sign = uniform(0, 2) ? -1 : 1;
 						code =
 							q{
-								int F() { int A = X, B = Y; B@@; A /= B; return A; }
-							}.outdent().strip()
+								int F()
+								{
+									int A = X, B = Y;
+									B@@;
+									A /= B;
+									return A;
+								}
+							}.formatExample()
 							.replace("F", identifiers.pluck)
 							.replace("A", identifiers.pluck)
 							.replace("B", identifiers.pluck)
@@ -195,8 +212,11 @@ Challenge getCaptcha()
 						int d = uniform(2, c/2);
 						code =
 							q{
-								int F() { return X % Y ? A / B : C % D; }
-							}.outdent().strip()
+								int F()
+								{
+									return X % Y ? A / B : C % D;
+								}
+							}.formatExample()
 							.replace("F", identifiers.pluck)
 							.replace("X", x.text)
 							.replace("Y", y.text)
@@ -215,8 +235,11 @@ Challenge getCaptcha()
 						string id = identifiers.pluck;
 						code =
 							q{
-								string F() { return format("A=%0WX", N); }
-							}.outdent().strip()
+								string F()
+								{
+									return format("A=%0WX", N);
+								}
+							}.formatExample()
 							.replace("F", identifiers.pluck)
 							.replace("A", id)
 							.replace("N", n.text)
@@ -230,8 +253,11 @@ Challenge getCaptcha()
 						int x = uniform(10, 100);
 						code =
 							q{
-								int F() { return iota(X).reduce!max; }
-							}.outdent().strip()
+								int F()
+								{
+									return iota(X).reduce!max;
+								}
+							}.formatExample()
 							.replace("F", identifiers.pluck)
 							.replace("X", x.text)
 						;
@@ -242,8 +268,11 @@ Challenge getCaptcha()
 						int x = uniform(3, 10);
 						code =
 							q{
-								int F() { return iota(X).reduce!"a+b"; }
-							}.outdent().strip()
+								int F()
+								{
+									return iota(X).reduce!"a+b";
+								}
+							}.formatExample()
 							.replace("F", identifiers.pluck)
 							.replace("X", x.text)
 						;
@@ -258,6 +287,15 @@ Challenge getCaptcha()
 private string[] cartesianJoin(PARTS...)(PARTS parts)
 {
 	return cartesianProduct(parts).map!(t => join([t.expand])).array();
+}
+
+private string formatExample(string s)
+{
+	return s
+		.outdent()
+		.strip()
+		.replace("\t", "  ")
+	;
 }
 
 version(dcaptcha_main)
