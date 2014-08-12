@@ -26,7 +26,7 @@ template MarkovChain(int LENGTH)
 
 		string[][string[]] dic;
 		foreach (paragraph; paragraphs)
-			foreach (int n; 0..paragraph.length)
+			foreach (int n; 0..cast(int)paragraph.length)
 				dic[paragraph[max(n-LENGTH, 0)..n]] ~= paragraph[n];
 		dictionary = dic.assumeUnique();
 	}
