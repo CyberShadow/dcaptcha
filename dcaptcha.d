@@ -332,7 +332,19 @@ void main()
 		static int n; writeln(n++); stdout.flush();
 		auto challenge = getCaptcha();
 		scope(failure) printChallenge(challenge);
+
 		foreach (line; challenge.code.splitLines())
 			enforce(line.length <= 38, "Line too long");
+
+		if (challenge.question == "What will be the return value of the following function?")
+		{
+			auto functionName = challenge.code.split()[1];
+			auto expr = "(){ " ~ challenge.code.replace("\n", " ") ~ " writeln(" ~ functionName ~ "); }()";
+			import std.process;
+			auto result = execute(["rdmd", "--eval=" ~ expr]);
+			scope(failure) writeln("rdmd output: ", result.output);
+			enforce(result.status == 0, "rdmd failed");
+			enforce(result.output.strip() == challenge.answers[0], "Wrong answer");
+		}
 	}
 }
