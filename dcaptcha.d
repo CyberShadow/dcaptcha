@@ -22,7 +22,12 @@ struct Challenge
 
 Challenge getCaptcha()
 {
-	string[] identifiers = 26.iota.map!(l => [cast(char)('a'+l)].assumeUnique()).array();
+	string[] identifiers =
+		26
+		.iota
+		.map!(l => [cast(char)('a'+l)].assumeUnique())
+		.filter!(s => s != "l")
+		.array();
 	identifiers ~= "foo, bar, baz".split(", ");
 	//identifiers ~= "qux, quux, corge, grault, garply, waldo, fred, plugh, xyzzy, thud".split(", ");
 
