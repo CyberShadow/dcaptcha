@@ -303,11 +303,9 @@ private string formatExample(string s)
 	;
 }
 
-version(dcaptcha_main)
-void main()
+private void printChallenge()(Challenge challenge)
 {
 	import std.stdio;
-	auto challenge = getCaptcha();
 	writeln("Question:");
 	writeln(challenge.question);
 	writeln();
@@ -316,4 +314,25 @@ void main()
 	writeln("Answers:");
 	foreach (n, answer; challenge.answers)
 		writeln(n+1, ". ", answer);
+}
+
+version(dcaptcha_main)
+void main()
+{
+	auto challenge = getCaptcha();
+	printChallenge(challenge);
+}
+
+version(dcaptcha_test)
+void main()
+{
+	import std.stdio;
+	while (true)
+	{
+		static int n; writeln(n++); stdout.flush();
+		auto challenge = getCaptcha();
+		scope(failure) printChallenge(challenge);
+		foreach (line; challenge.code.splitLines())
+			enforce(line.length <= 38, "Line too long");
+	}
 }
