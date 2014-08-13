@@ -165,8 +165,14 @@ Challenge getCaptcha()
 				[
 					// Modulo operator (%)
 					{
-						int x = uniform(10, 50);
-						int y = uniform(x/4, x/2);
+						int x, y;
+						do
+						{
+							x = uniform(10, 50);
+							y = uniform(x/4, x/2);
+						}
+						while (x % y == 0);
+
 						code =
 							q{
 								int F()
@@ -212,9 +218,9 @@ Challenge getCaptcha()
 						int x = uniform(10, 50);
 						int y = uniform(2, 4);
 						int a = uniform(10, 50);
-						int b = uniform(2, a/2);
-						int c = uniform(10, 50);
-						int d = uniform(2, c/2);
+						int b = uniform(2, a/3);
+						int d = uniform(5, 10);
+						int c = uniform(2, 50 / d) * d + uniform(1, d);
 						code =
 							q{
 								int F()
@@ -336,6 +342,7 @@ void main()
 		foreach (line; challenge.code.splitLines())
 			enforce(line.length <= 38, "Line too long");
 
+		version(dcaptcha_verify)
 		if (challenge.question == "What will be the return value of the following function?")
 		{
 			auto functionName = challenge.code.split()[1];
@@ -346,5 +353,7 @@ void main()
 			enforce(result.status == 0, "rdmd failed");
 			enforce(result.output.strip() == challenge.answers[0], "Wrong answer");
 		}
+
+		enforce(challenge.answers[0] != "0", "Zero answer");
 	}
 }
