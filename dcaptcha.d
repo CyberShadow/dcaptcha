@@ -20,6 +20,20 @@ struct Challenge
 	string[] answers;
 }
 
+/**
+	Goals:
+	- Answers should not be obvious:
+	  - Keywords shouldn't give away the answer, e.g. `unittest { ... }`
+	    is obviously an unit test block.
+	  - `return 2+2` is obvious to non-programmers.
+	- Answers should vary considerably:
+	  - A question which has the answer "0" much of the time is easy
+	    to defeat simply by giving the answer "0" all of the time.
+	- Questions should not be Google-able:
+	  - Search engines ignore most punctuation and math operators.
+	  - Keywords and string literals should vary or be generic enough.
+**/
+
 Challenge getCaptcha()
 {
 	string[] identifiers =
