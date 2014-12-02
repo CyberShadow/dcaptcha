@@ -1,3 +1,6 @@
+module dcaptcha.alice30;
+
+static const sourceText = q"EOF
 ***This is the Project Gutenberg Etext of Alice in Wonderland***
 *This 30th edition should be labeled alice30.txt or alice30.zip.
 ***This Edition Is Being Officially Released On March 8, 1994***
@@ -3850,4 +3853,4 @@ simple sorrows, and find a pleasure in all their simple joys,
 remembering her own child-life, and the happy summer days.
 
                              THE END
-
+EOF";

@@ -6,7 +6,7 @@ import std.exception;
 
 import ae.utils.array;
 
-immutable sourceText = import("alice30.txt");
+import dcaptcha.alice30;
 
 template MarkovChain(int LENGTH)
 {
