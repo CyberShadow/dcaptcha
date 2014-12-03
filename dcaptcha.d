@@ -18,6 +18,7 @@ struct Challenge
 {
 	string question, code;
 	string[] answers;
+	string hint; /// HTML!
 }
 
 /**
@@ -53,6 +54,9 @@ Challenge getCaptcha()
 			// Identify syntax
 			{
 				question = "What is the name of the D language syntax feature illustrated in the following fragment of D code?";
+				hint = `You can find the answers in the <a href="http://dlang.org/spec.html">Language Reference section of dlang.org</a>.`;
+				//	`You can find the answers in the <a href="http://dlang.org/lex.html">Lexical</a> and `
+				//	`<a href="http://dlang.org/grammar.html">Grammar</a> language reference sections on dlang.org.`;
 				[
 					// lambda
 					{
@@ -176,6 +180,7 @@ Challenge getCaptcha()
 			// (use syntax that only programmers should be familiar with)
 			{
 				question = "What will be the return value of the following function?";
+				hint = `You can run D code online on <a href="http://dpaste.dzfl.pl/">DPaste</a>.`;
 				[
 					// Modulo operator (%)
 					{
