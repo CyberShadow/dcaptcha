@@ -142,7 +142,7 @@ Challenge getCaptcha()
 							.replace("A", identifiers.pluck)
 							.replace("CC", hex)
 						;
-						answers = cartesianJoin(["hex", "hex ", "hexadecimal "], ["string", "strings"]);
+						answers = cartesianJoin(["hex", "hex ", "hexadecimal "], ["string", "strings"], ["", " literal", " literals"]);
 					},
 					// associative arrays
 					{
