@@ -54,7 +54,7 @@ Challenge getCaptcha()
 			// Identify syntax
 			{
 				question = "What is the name of the D language syntax feature illustrated in the following fragment of D code?";
-				hint = `You can find the answers in the <a href="http://dlang.org/spec.html">Language Reference section of dlang.org</a>.`;
+				hint = `You can find the answer in the<br><a href="http://dlang.org/spec.html">Language Reference section of dlang.org</a>.`;
 				//	`You can find the answers in the <a href="http://dlang.org/lex.html">Lexical</a> and `
 				//	`<a href="http://dlang.org/grammar.html">Grammar</a> language reference sections on dlang.org.`;
 				[
