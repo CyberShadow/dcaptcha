@@ -396,10 +396,14 @@ version(dcaptcha_test)
 void main()
 {
 	import std.stdio;
+	rndGen.seed(0);
+
 	while (true)
 	{
 		static int n; writeln(n++); stdout.flush();
-		auto challenge = getCaptcha();
+		auto difficulty = uniform(0, 3);
+		CaptchaSpec spec = CaptchaSpec(difficulty<=1, difficulty>=1, uniform(0, 2)==0);
+		auto challenge = getCaptcha(spec);
 		scope(failure) printChallenge(challenge);
 
 		foreach (line; challenge.code.splitLines())
