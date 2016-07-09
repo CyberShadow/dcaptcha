@@ -14,6 +14,13 @@ import ae.utils.array;
 
 import dcaptcha.markov;
 
+struct CaptchaSpec
+{
+	bool allowEasy = true;
+	bool allowHard = false;
+	bool allowStatic = false;
+}
+
 struct Challenge
 {
 	string question, code;
@@ -35,7 +42,7 @@ struct Challenge
 	  - Keywords and string literals should vary or be generic enough.
 **/
 
-Challenge getCaptcha()
+Challenge getCaptcha(CaptchaSpec spec = CaptchaSpec.init)
 {
 	string[] identifiers =
 		26
@@ -53,10 +60,13 @@ Challenge getCaptcha()
 		[
 			// Identify syntax
 			{
+				if (!spec.allowStatic || !spec.allowHard)
+					return false;
 				question = "What is the name of the D language syntax feature illustrated in the following fragment of D code?";
 				hint = `You can find the answer in the<br><a href="http://dlang.org/spec.html">Language Reference section of dlang.org</a>.`;
 				//	`You can find the answers in the <a href="http://dlang.org/lex.html">Lexical</a> and `
 				//	`<a href="http://dlang.org/grammar.html">Grammar</a> language reference sections on dlang.org.`;
+				return
 				[
 					// lambda
 					{
@@ -69,6 +79,7 @@ Challenge getCaptcha()
 							.replace("@", mathOperators.pluck)
 						;
 						answers = cartesianJoin(["lambda", "lambda function", "anonymous function"], ["", " literal"]);
+						return true;
 					},
 					// static destructor
 					{
@@ -83,6 +94,7 @@ Challenge getCaptcha()
 							.replace("BYE", bye)
 						;
 						answers = ["static destructor", "module destructor", "thread destructor"];
+						return true;
 					},
 					// nested comments
 					{
@@ -97,6 +109,7 @@ Challenge getCaptcha()
 							.replace("@", mathOperators.pluck)
 						;
 						answers = cartesianJoin(["nested ", "nesting "], ["", "block "], ["comment", "comments"]);
+						return true;
 					},
 					// anonymous nested classes
 					{
@@ -108,6 +121,7 @@ Challenge getCaptcha()
 							.replace("O", identifiers.pluck.toUpper)
 						;
 						answers = cartesianJoin(["anonymous "], ["", "nested "], ["class", "classes"]);
+						return true;
 					},
 					// delimited (heredoc) strings
 					{
@@ -120,6 +134,7 @@ Challenge getCaptcha()
 							.replace("TEXT", `q"` ~ delimiter ~ "\n" ~ MarkovChain!2.query().join(" ").wrap(38).strip() ~ "\n" ~ delimiter ~ `"`)
 						;
 						answers = cartesianJoin(["", "multiline ", "multi-line "], ["delimited", "heredoc"], ["", " string", " strings"]);
+						return true;
 					},
 					// hex strings
 					{
@@ -147,6 +162,7 @@ Challenge getCaptcha()
 							.replace("CC", hex)
 						;
 						answers = cartesianJoin(["hex", "hex ", "hexadecimal "], ["string", "strings"], ["", " literal", " literals"]);
+						return true;
 					},
 					// associative arrays
 					{
@@ -160,6 +176,7 @@ Challenge getCaptcha()
 							.replace("U", types.sample)
 						;
 						answers = ["AA", "associative array", "hashmap"];
+						return true;
 					},
 					// array slicing
 					{
@@ -173,17 +190,20 @@ Challenge getCaptcha()
 							.replace("Y", uniform(5, 10).text)
 						;
 						answers = cartesianJoin(["", "array "], ["slice", "slicing"]);
+						return true;
 					},
-				].sample()();
+				].randomCover().map!(f => f()).any();
 			},
 			// Calculate function result
 			// (use syntax that only programmers should be familiar with)
 			{
 				question = "What will be the return value of the following function?";
 				hint = `You can run D code online on <a href="http://dpaste.dzfl.pl/">DPaste</a>.`;
+				return
 				[
 					// Modulo operator (%)
 					{
+						if (!spec.allowEasy) return false;
 						int x, y;
 						do
 						{
@@ -207,9 +227,11 @@ Challenge getCaptcha()
 							.replace("Y", y.text)
 						;
 						answers = [(x % y).text];
+						return true;
 					},
 					// Integer division, increment
 					{
+						if (!spec.allowEasy) return false;
 						int y = uniform(2, 5);
 						int x = uniform(5, 50/y) * y + uniform(1, y);
 						int sign = uniform(0, 2) ? -1 : 1;
@@ -231,9 +253,11 @@ Challenge getCaptcha()
 							.replace("@", sign > 0 ? "+" : "-")
 						;
 						answers = [(x / y).text];
+						return true;
 					},
 					// Ternary operator + division/modulo
 					{
+						if (!spec.allowEasy) return false;
 						int x = uniform(10, 50);
 						int y = uniform(2, 4);
 						int a = uniform(10, 50);
@@ -256,9 +280,11 @@ Challenge getCaptcha()
 							.replace("D", d.text)
 						;
 						answers = [(x % y ? a / b : c % d).text];
+						return true;
 					},
 					// Formatting, hexadecimal numbers
 					{
+						if (!spec.allowEasy) return false;
 						int n = uniform(20, 100);
 						n &= ~7;
 						int w = uniform(2, 8);
@@ -277,9 +303,11 @@ Challenge getCaptcha()
 						;
 						answers = [format("%s=%0*X", id, w, n)];
 						answers ~= answers.map!(s => `"`~s~`"`).array();
+						return true;
 					},
 					// iota+reduce - max
 					{
+						if (!spec.allowHard) return false;
 						int x = uniform(10, 100);
 						code =
 							q{
@@ -292,9 +320,11 @@ Challenge getCaptcha()
 							.replace("X", x.text)
 						;
 						answers = [(x - 1).text];
+						return true;
 					},
 					// iota+reduce - sum
 					{
+						if (!spec.allowHard) return false;
 						int x = uniform(3, 10);
 						code =
 							q{
@@ -307,10 +337,11 @@ Challenge getCaptcha()
 							.replace("X", x.text)
 						;
 						answers = [(iota(x).reduce!"a+b").text];
+						return true;
 					},
-				].sample()();
+				].randomCover().map!(f => f()).any();
 			},
-		].sample()();
+		].randomCover().map!(f => f()).any().enforce("Can't find suitable CAPTCHA");
 	return challenge;
 }
 
