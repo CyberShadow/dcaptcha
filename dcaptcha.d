@@ -53,6 +53,14 @@ Challenge getCaptcha(CaptchaSpec spec = CaptchaSpec.init)
 	identifiers ~= "foo, bar, baz".split(", ");
 	//identifiers ~= "qux, quux, corge, grault, garply, waldo, fred, plugh, xyzzy, thud".split(", ");
 
+	enum hardFactor = 100;
+	int lowerFactor = spec.allowEasy ? 1 : hardFactor;
+	int upperFactor = spec.allowHard ? hardFactor : 1;
+
+	assert(spec.allowEasy || spec.allowHard, "No difficulty selected");
+
+	int specUniform(int lowerBound, int upperBound) { return uniform(lowerBound*lowerFactor, upperBound*upperFactor); }
+
 	string[] mathOperators = "+ - / * %".split();
 
 	Challenge challenge;
@@ -203,12 +211,11 @@ Challenge getCaptcha(CaptchaSpec spec = CaptchaSpec.init)
 				[
 					// Modulo operator (%)
 					{
-						if (!spec.allowEasy) return false;
 						int x, y;
 						do
 						{
-							x = uniform(10, 50);
-							y = uniform(x/4, x/2);
+							x = specUniform(10, 50);
+							y = specUniform(x/4, x/2);
 						}
 						while (x % y == 0);
 
@@ -231,9 +238,8 @@ Challenge getCaptcha(CaptchaSpec spec = CaptchaSpec.init)
 					},
 					// Integer division, increment
 					{
-						if (!spec.allowEasy) return false;
-						int y = uniform(2, 5);
-						int x = uniform(5, 50/y) * y + uniform(1, y);
+						int y = specUniform(2, 5);
+						int x = uniform(5, 50*upperFactor / y) * y + specUniform(1, y);
 						int sign = uniform(0, 2) ? -1 : 1;
 						code =
 							q{
@@ -257,18 +263,19 @@ Challenge getCaptcha(CaptchaSpec spec = CaptchaSpec.init)
 					},
 					// Ternary operator + division/modulo
 					{
-						if (!spec.allowEasy) return false;
-						int x = uniform(10, 50);
-						int y = uniform(2, 4);
-						int a = uniform(10, 50);
-						int b = uniform(2, a/3);
-						int d = uniform(5, 10);
-						int c = uniform(2, 50 / d) * d + uniform(1, d);
+						int x = specUniform(10, 50);
+						int y = specUniform(2, 4);
+						int a = specUniform(10, 50);
+						int b = uniform(2*lowerFactor, a/3);
+						int d = specUniform(5, 10);
+						int c = uniform(2, 50*upperFactor / d) * d + uniform(1, d);
 						code =
 							q{
 								int F()
 								{
-									return X % Y ? A / B : C % D;
+									return X % Y
+										? A / B
+										: C % D;
 								}
 							}.formatExample()
 							.replace("F", identifiers.pluck)
@@ -284,8 +291,7 @@ Challenge getCaptcha(CaptchaSpec spec = CaptchaSpec.init)
 					},
 					// Formatting, hexadecimal numbers
 					{
-						if (!spec.allowEasy) return false;
-						int n = uniform(20, 100);
+						int n = specUniform(20, 100);
 						n &= ~7;
 						int w = uniform(2, 8);
 						string id = identifiers.pluck;
@@ -307,8 +313,7 @@ Challenge getCaptcha(CaptchaSpec spec = CaptchaSpec.init)
 					},
 					// iota+reduce - max
 					{
-						if (!spec.allowHard) return false;
-						int x = uniform(10, 100);
+						int x = specUniform(10, 100);
 						code =
 							q{
 								int F()
@@ -325,7 +330,7 @@ Challenge getCaptcha(CaptchaSpec spec = CaptchaSpec.init)
 					// iota+reduce - sum
 					{
 						if (!spec.allowHard) return false;
-						int x = uniform(3, 10);
+						int x = specUniform(3, 10);
 						code =
 							q{
 								int F()
