@@ -373,10 +373,18 @@ private void printChallenge()(Challenge challenge)
 }
 
 version(dcaptcha_main)
-void main()
 {
-	auto challenge = getCaptcha();
-	printChallenge(challenge);
+	import ae.utils.funopt;
+	import ae.utils.main;
+
+	void test(bool allowEasy, bool allowHard, bool allowStatic)
+	{
+		CaptchaSpec spec = { allowEasy : allowEasy, allowHard : allowHard, allowStatic : allowStatic };
+		auto challenge = getCaptcha(spec);
+		printChallenge(challenge);
+	}
+
+	mixin main!(funopt!test);
 }
 
 version(dcaptcha_test)
