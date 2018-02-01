@@ -1,0 +1,12 @@
+name "dcaptcha"
+description "CAPTCHA for D programmers"
+authors "Vladimir Panteleev <vladimir@thecybershadow.net>"
+homepage "https://github.com/CyberShadow/dcaptcha"
+license "MPL-2.0"
+targetType "sourceLibrary"
+
+importPaths "."
+sourceFiles "dcaptcha.d"
+sourceFiles "markov.d"
+sourceFiles "alice30.d"
+dependency "ae" version=">=0.0.1969"
