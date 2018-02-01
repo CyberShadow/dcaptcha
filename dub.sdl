@@ -10,3 +10,10 @@ sourceFiles "dcaptcha.d"
 sourceFiles "markov.d"
 sourceFiles "alice30.d"
 dependency "ae" version=">=0.0.1969"
+
+subPackage {
+	name "test"
+        targetType "executable"
+        sourceFiles "test.d"
+        dependency "dcaptcha" version="*" path="."
+}
