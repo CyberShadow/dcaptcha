@@ -144,7 +144,8 @@ Challenge getCaptcha(CaptchaSpec spec = CaptchaSpec.init)
 						answers = cartesianJoin(["", "multiline ", "multi-line "], ["delimited", "heredoc"], ["", " string", " strings"]);
 						return true;
 					},
-					// hex strings
+					// hex strings (deprecated)
+					/+
 					{
 						string hex;
 						do
@@ -171,7 +172,7 @@ Challenge getCaptcha(CaptchaSpec spec = CaptchaSpec.init)
 						;
 						answers = cartesianJoin(["hex", "hex ", "hexadecimal "], ["string", "strings"], ["", " literal", " literals"]);
 						return true;
-					},
+					},+/
 					// associative arrays
 					{
 						string[] types = ["int", "string"];
