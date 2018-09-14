@@ -207,7 +207,7 @@ Challenge getCaptcha(CaptchaSpec spec = CaptchaSpec.init)
 			// (use syntax that only programmers should be familiar with)
 			{
 				question = "What will be the return value of the following function?";
-				hint = `You can run D code online on <a href="http://dpaste.dzfl.pl/">DPaste</a>.`;
+				hint = `You can run D code online on <a href="https://run.dlang.io/">run.dlang.io</a>.`;
 				return
 				[
 					// Modulo operator (%)
