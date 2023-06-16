@@ -50,7 +50,7 @@ template MarkovChain(int LENGTH)
 	}
 }
 
-version(markov_main)
+version (main_markov)
 void main()
 {
 	import std.stdio;
